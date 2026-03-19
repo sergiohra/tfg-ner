@@ -1,0 +1,6 @@
+transformers
+spacy
+stanza
+datasets
+seqeval
+torch
