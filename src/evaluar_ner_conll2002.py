@@ -1,12 +1,8 @@
-# evaluar_ner.py
-# Compara tres librerías NER en español sobre WikiANN (2017)
+# evaluar_ner_conll2002.py
+# Compara tres librerías NER en español sobre CoNLL-2002 (es)
 # Librerías: HuggingFace (BERT), spaCy (lg), Stanza
 # Métricas: Precision, Recall, F1 (seqeval, evaluación exacta)
-#
-# Instalación:
-#   pip install transformers spacy stanza datasets seqeval torch
-#   python -m spacy download es_core_news_lg
-#   python -c "import stanza; stanza.download('es')"
+# Solo PER, LOC, ORG (MISC se convierte a O para comparación directa con WikiANN)
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -20,16 +16,27 @@ from seqeval.metrics import precision_score, recall_score, f1_score, classificat
 # ─────────────────────────────────────────────────────────────
 # 1. CARGAR DATASET
 # ─────────────────────────────────────────────────────────────
-print("Cargando WikiANN (es)...")
-dataset = load_dataset("wikiann", "es")
+print("Cargando CoNLL-2002 (es)...")
+dataset = load_dataset("conll2002", "es")
+# CoNLL-2002 tiene 9 etiquetas: O, B-PER, I-PER, B-ORG, I-ORG, B-LOC, I-LOC, B-MISC, I-MISC
+label_names = dataset["train"].features["ner_tags"].feature.names
 
-label_names = ["O", "B-PER", "I-PER", "B-ORG", "I-ORG", "B-LOC", "I-LOC"]
-N = len(dataset["test"])  # Número total de frases en el test set (aprox. 10k)
+# Etiquetas que queremos mantener (filtramos MISC → O)
+KEEP_TYPES = {"PER", "LOC", "ORG"}
+
+def filter_tags(tag_str):
+    """Convierte etiquetas MISC a O, mantiene PER/LOC/ORG."""
+    if tag_str == "O":
+        return "O"
+    prefix, tipo = tag_str.split("-", 1)
+    if tipo in KEEP_TYPES:
+        return tag_str
+    return "O"
 
 # ─────────────────────────────────────────────────────────────
 # 2. INSPECCIÓN DEL DATASET
 # ─────────────────────────────────────────────────────────────
-print("\n===== INFORMACIÓN DEL DATASET: WikiANN (es) =====")
+print("\n===== INFORMACIÓN DEL DATASET: CoNLL-2002 (es) =====")
 
 for split in ["train", "validation", "test"]:
     split_data = dataset[split]
@@ -39,15 +46,20 @@ for split in ["train", "validation", "test"]:
         sum(1 for tag in s if label_names[tag].startswith("B-"))
         for s in split_data["ner_tags"]
     )
-    longitud_media = total_tokens / num_frases
+    entidades_filtradas = sum(
+        sum(1 for tag in s if label_names[tag].startswith("B-") and label_names[tag][2:] in KEEP_TYPES)
+        for s in split_data["ner_tags"]
+    )
+    longitud_media = total_tokens / num_frases if num_frases > 0 else 0
     print(f"\n  [{split.upper()}]")
     print(f"    Frases:            {num_frases}")
     print(f"    Tokens totales:    {total_tokens}")
     print(f"    Longitud media:    {longitud_media:.1f} tokens/frase")
-    print(f"    Entidades totales: {total_entidades}")
+    print(f"    Entidades totales: {total_entidades} (todas)")
+    print(f"    Entidades PER/LOC/ORG: {entidades_filtradas} (sin MISC)")
 
 print(f"\n  [TEST — desglose por tipo de entidad]")
-conteo = {"PER": 0, "LOC": 0, "ORG": 0}
+conteo = {"PER": 0, "LOC": 0, "ORG": 0, "MISC": 0}
 for ejemplo in dataset["test"]:
     for tag in ejemplo["ner_tags"]:
         etiqueta = label_names[tag]
@@ -58,16 +70,18 @@ for ejemplo in dataset["test"]:
 for tipo, n in conteo.items():
     print(f"    {tipo}: {n} entidades")
 
-print(f"\n  Usando para evaluación: {N} frases del test set")
-print("=" * 50 + "\n")
+print(f"\n  Evaluando sobre: test set completo (solo PER, LOC, ORG)")
+print("=" * 55 + "\n")
 
 # ─────────────────────────────────────────────────────────────
 # 3. PREPARAR DATOS DE EVALUACIÓN
 # ─────────────────────────────────────────────────────────────
 test_data = dataset["test"]
+N = len(test_data)
+
 sentences_tokens = [test_data[i]["tokens"] for i in range(N)]
 y_true = [
-    [label_names[tag] for tag in test_data[i]["ner_tags"]]
+    [filter_tags(label_names[tag]) for tag in test_data[i]["ner_tags"]]
     for i in range(N)
 ]
 
@@ -97,7 +111,7 @@ ner_hf = pipeline(
     "ner",
     model="mrm8488/bert-spanish-cased-finetuned-ner",
     aggregation_strategy="simple",
-    device=-1  # Cambiar a 0 si tienes GPU
+    device=-1
 )
 
 y_hf = []
@@ -107,7 +121,7 @@ for tokens in sentences_tokens:
     entities = [
         {"start": r["start"], "end": r["end"], "label": r["entity_group"]}
         for r in results
-        if r["entity_group"] in ("PER", "LOC", "ORG")
+        if r["entity_group"] in KEEP_TYPES
     ]
     y_hf.append(spans_to_iob(tokens, entities))
 
@@ -137,11 +151,14 @@ nlp_stanza = stanza.Pipeline('es', processors='tokenize,ner', tokenize_pretokeni
 
 y_stanza = []
 for tokens in sentences_tokens:
+    if len(tokens) == 0:
+        y_stanza.append([])
+        continue
     doc = nlp_stanza([tokens])
     text = " ".join(tokens)
     entities = []
     for ent in doc.entities:
-        if ent.type in ("PER", "LOC", "ORG"):
+        if ent.type in KEEP_TYPES:
             start = text.find(ent.text)
             if start != -1:
                 entities.append({
@@ -154,11 +171,11 @@ for tokens in sentences_tokens:
 # ─────────────────────────────────────────────────────────────
 # 8. TABLA COMPARATIVA
 # ─────────────────────────────────────────────────────────────
-print("\n" + "=" * 65)
-print(f"  RESULTADOS — WikiANN ES (test, {N} frases, exact match)")
-print("=" * 65)
+print("\n" + "=" * 70)
+print(f"  RESULTADOS — CoNLL-2002 ES (test, {N} frases, exact match, sin MISC)")
+print("=" * 70)
 print(f"{'Librería':<35} {'Precision':>9} {'Recall':>9} {'F1':>9}")
-print("-" * 65)
+print("-" * 70)
 
 modelos = [
     ("HuggingFace (bert-spanish-ner)", y_hf),
@@ -172,7 +189,7 @@ for nombre, y_pred in modelos:
     f = f1_score(y_true, y_pred)
     print(f"{nombre:<35} {p:>9.3f} {r:>9.3f} {f:>9.3f}")
 
-print("=" * 65)
+print("=" * 70)
 
 print("\n── Detalle por entidad — HuggingFace ──")
 print(classification_report(y_true, y_hf))
