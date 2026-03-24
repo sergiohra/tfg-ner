@@ -1,8 +1,4 @@
-# evaluar_ner_conll2002.py
-# Compara tres librerías NER en español sobre CoNLL-2002 (es)
-# Librerías: HuggingFace (BERT), spaCy (lg), Stanza
-# Métricas: Precision, Recall, F1 (seqeval, evaluación exacta)
-# Solo PER, LOC, ORG (MISC se convierte a O para comparación directa con WikiANN)
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -13,15 +9,13 @@ from datasets import load_dataset
 from transformers import pipeline
 from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
 
-# ─────────────────────────────────────────────────────────────
-# 1. CARGAR DATASET
-# ─────────────────────────────────────────────────────────────
+# Cargamos el dataset CoNLL-2002 (español) y preparamos las etiquetas
 print("Cargando CoNLL-2002 (es)...")
 dataset = load_dataset("conll2002", "es")
 # CoNLL-2002 tiene 9 etiquetas: O, B-PER, I-PER, B-ORG, I-ORG, B-LOC, I-LOC, B-MISC, I-MISC
-label_names = dataset["train"].features["ner_tags"].feature.names
+label_names = dataset["train"].features["ner_tags"].feature.names 
 
-# Etiquetas que queremos mantener (filtramos MISC → O)
+# Etiquetas que queremos mantener (filtramos MISC) para que sean las mismas que para WikiANN
 KEEP_TYPES = {"PER", "LOC", "ORG"}
 
 def filter_tags(tag_str):
@@ -33,9 +27,7 @@ def filter_tags(tag_str):
         return tag_str
     return "O"
 
-# ─────────────────────────────────────────────────────────────
-# 2. INSPECCIÓN DEL DATASET
-# ─────────────────────────────────────────────────────────────
+#Información general del dataset
 print("\n===== INFORMACIÓN DEL DATASET: CoNLL-2002 (es) =====")
 
 for split in ["train", "validation", "test"]:
@@ -73,9 +65,7 @@ for tipo, n in conteo.items():
 print(f"\n  Evaluando sobre: test set completo (solo PER, LOC, ORG)")
 print("=" * 55 + "\n")
 
-# ─────────────────────────────────────────────────────────────
-# 3. PREPARAR DATOS DE EVALUACIÓN
-# ─────────────────────────────────────────────────────────────
+# Preparamos los datos de test para evaluación
 test_data = dataset["test"]
 N = len(test_data)
 
@@ -85,9 +75,7 @@ y_true = [
     for i in range(N)
 ]
 
-# ─────────────────────────────────────────────────────────────
-# 4. HELPER: spans {start, end, label} → etiquetas IOB por token
-# ─────────────────────────────────────────────────────────────
+# Función para convertir entidades con offsets a etiquetas IOB por token
 def spans_to_iob(tokens, entities):
     labels = ["O"] * len(tokens)
     offsets, pos = [], 0
@@ -103,9 +91,7 @@ def spans_to_iob(tokens, entities):
                 first = False
     return labels
 
-# ─────────────────────────────────────────────────────────────
-# 5. HUGGING FACE — mrm8488/bert-spanish-cased-finetuned-ner
-# ─────────────────────────────────────────────────────────────
+# Modelos a evaluar
 print("▶ [1/3] HuggingFace (mrm8488/bert-spanish-cased-finetuned-ner)...")
 ner_hf = pipeline(
     "ner",
@@ -125,12 +111,9 @@ for tokens in sentences_tokens:
     ]
     y_hf.append(spans_to_iob(tokens, entities))
 
-# ─────────────────────────────────────────────────────────────
-# 6. SPACY — es_core_news_lg
-# ─────────────────────────────────────────────────────────────
 print("▶ [2/3] spaCy (es_core_news_lg)...")
 nlp_spacy = spacy.load("es_core_news_lg")
-spacy_map = {"PER": "PER", "LOC": "LOC", "ORG": "ORG", "GPE": "LOC"}
+spacy_map = {"PERSONs": "PER", "LOC": "LOC", "ORG": "ORG", "GPE": "LOC"}
 
 y_spacy = []
 for tokens in sentences_tokens:
@@ -168,9 +151,7 @@ for tokens in sentences_tokens:
                 })
     y_stanza.append(spans_to_iob(tokens, entities))
 
-# ─────────────────────────────────────────────────────────────
-# 8. TABLA COMPARATIVA
-# ─────────────────────────────────────────────────────────────
+# Tabla de resultados
 print("\n" + "=" * 70)
 print(f"  RESULTADOS — CoNLL-2002 ES (test, {N} frases, exact match, sin MISC)")
 print("=" * 70)

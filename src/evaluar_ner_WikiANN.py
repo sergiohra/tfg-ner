@@ -1,7 +1,3 @@
-# evaluar_ner.py
-# Compara tres librerías NER en español sobre WikiANN
-# Librerías: HuggingFace (BERT), spaCy (lg), Stanza
-# Métricas: Precision, Recall, F1 (seqeval, evaluación exacta)
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -12,18 +8,14 @@ from datasets import load_dataset
 from transformers import pipeline
 from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
 
-# ─────────────────────────────────────────────────────────────
-# 1. CARGAR DATASET
-# ─────────────────────────────────────────────────────────────
+# Cargamos el dataset WikiANN 
 print("Cargando WikiANN (es)...")
 dataset = load_dataset("wikiann", "es")
 
 label_names = ["O", "B-PER", "I-PER", "B-ORG", "I-ORG", "B-LOC", "I-LOC"]
-N = len(dataset["test"])  # Número total de frases en el test set (aprox. 10k)
+N = len(dataset["test"]) # Número total de frases en el test set
 
-# ─────────────────────────────────────────────────────────────
-# 2. INSPECCIÓN DEL DATASET
-# ─────────────────────────────────────────────────────────────
+# Información general del dataset
 print("\n===== INFORMACIÓN DEL DATASET: WikiANN (es) =====")
 
 for split in ["train", "validation", "test"]:
@@ -56,9 +48,7 @@ for tipo, n in conteo.items():
 print(f"\n  Usando para evaluación: {N} frases del test set")
 print("=" * 50 + "\n")
 
-# ─────────────────────────────────────────────────────────────
-# 3. PREPARAR DATOS DE EVALUACIÓN
-# ─────────────────────────────────────────────────────────────
+# Preparamos los datos de test para evaluación
 test_data = dataset["test"]
 sentences_tokens = [test_data[i]["tokens"] for i in range(N)]
 y_true = [
@@ -66,9 +56,7 @@ y_true = [
     for i in range(N)
 ]
 
-# ─────────────────────────────────────────────────────────────
-# 4. HELPER: spans {start, end, label} → etiquetas IOB por token
-# ─────────────────────────────────────────────────────────────
+# Función para convertir entidades con offsets a etiquetas IOB por token
 def spans_to_iob(tokens, entities):
     labels = ["O"] * len(tokens)
     offsets, pos = [], 0
@@ -84,9 +72,7 @@ def spans_to_iob(tokens, entities):
                 first = False
     return labels
 
-# ─────────────────────────────────────────────────────────────
-# 5. HUGGING FACE — mrm8488/bert-spanish-cased-finetuned-ner
-# ─────────────────────────────────────────────────────────────
+# Modelos a evaluar:
 print("▶ [1/3] HuggingFace (mrm8488/bert-spanish-cased-finetuned-ner)...")
 ner_hf = pipeline(
     "ner",
@@ -106,9 +92,7 @@ for tokens in sentences_tokens:
     ]
     y_hf.append(spans_to_iob(tokens, entities))
 
-# ─────────────────────────────────────────────────────────────
-# 6. SPACY — es_core_news_lg
-# ─────────────────────────────────────────────────────────────
+
 print("▶ [2/3] spaCy (es_core_news_lg)...")
 nlp_spacy = spacy.load("es_core_news_lg")
 spacy_map = {"PER": "PER", "LOC": "LOC", "ORG": "ORG", "GPE": "LOC"}
@@ -124,9 +108,7 @@ for tokens in sentences_tokens:
     ]
     y_spacy.append(spans_to_iob(tokens, entities))
 
-# ─────────────────────────────────────────────────────────────
-# 7. STANZA — pipeline español con NER
-# ─────────────────────────────────────────────────────────────
+
 print("▶ [3/3] Stanza (es, tokenize+ner)...")
 nlp_stanza = stanza.Pipeline('es', processors='tokenize,ner', tokenize_pretokenized=True)
 
@@ -146,9 +128,7 @@ for tokens in sentences_tokens:
                 })
     y_stanza.append(spans_to_iob(tokens, entities))
 
-# ─────────────────────────────────────────────────────────────
-# 8. TABLA COMPARATIVA
-# ─────────────────────────────────────────────────────────────
+# Tabla de resultados
 print("\n" + "=" * 65)
 print(f"  RESULTADOS — WikiANN ES (test, {N} frases, exact match)")
 print("=" * 65)
