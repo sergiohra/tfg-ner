@@ -1,0 +1,6 @@
+﻿RESULTADOS — WikiANN ES (test, 10000 frases, exact match)
+
+Librería                            Precision    Recall        F1
+HuggingFace (bert-spanish-ner)          0.475     0.469     0.472
+spaCy (es_core_news_lg)                 0.608     0.605     0.606
+Stanza (es)                             0.627     0.561     0.592
