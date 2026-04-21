@@ -1,6 +1,0 @@
-﻿RESULTADOS — CoNLL-2002 ES (test, 1518 frases, exact match, sin MISC)
-
-Librería                            Precision    Recall        F1
-HuggingFace (bert-spanish-ner)          0.957     0.790     0.866
-spaCy (es_core_news_lg)                 0.708     0.725     0.716
-Stanza (es)                             0.886     0.871     0.878
