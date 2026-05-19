@@ -1,9 +1,10 @@
-﻿transformers
-spacy
-stanza
+﻿--extra-index-url https://download.pytorch.org/whl/cpu
+transformers==4.45.0
+spacy==3.7.5
+stanza==1.8.2
 datasets==2.18.0
-nervaluate
-torch
-shiny
-htmltools
-pandas
+nervaluate==0.2.0
+torch==2.4.0
+shiny==1.0.0
+htmltools==0.5.3
+pandas==2.2.2
