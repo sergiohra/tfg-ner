@@ -1,5 +1,4 @@
 FROM python:3.10-slim
-
 WORKDIR /app
 
 # Dependencias del sistema
@@ -17,5 +16,3 @@ RUN python -c "import stanza; stanza.download('es')"
 
 # Copiar código
 COPY src/ ./src/
-
-CMD ["python", "src/evaluar_ner.py"]

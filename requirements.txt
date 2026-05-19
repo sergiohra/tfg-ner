@@ -4,3 +4,6 @@ stanza
 datasets==2.18.0
 nervaluate
 torch
+shiny
+htmltools
+pandas
