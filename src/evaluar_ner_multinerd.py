@@ -3,6 +3,7 @@ warnings.filterwarnings("ignore")
 
 import time
 import os
+import random
 import spacy
 import stanza
 from datasets import load_dataset
@@ -11,14 +12,14 @@ from nervaluate import Evaluator
 from collections import Counter
 
 # Configuración del experimento
-TRAZA_FILE = "traza_multiconer.txt"  
-RESULTADOS_FILE = "resultados_multiconer.txt"
-N = 5000 
-NUM_EJEMPLOS_TRAZA = 20 
-BATCH_SIZE_HF = 32 
-BATCH_SIZE_SPACY = 500 
+TRAZA_FILE = "../results/traza_multinerd.txt"  
+RESULTADOS_FILE = "../results/resultados_multinerd.txt"  
+N = 5000  
+SEED = 42  
+NUM_EJEMPLOS_TRAZA = 20
+BATCH_SIZE_HF = 32  
+BATCH_SIZE_SPACY = 500
 
-# Modos de evaluación para nervaluate
 MODES = ["strict", "exact", "partial", "ent_type"]
 MODE_NAMES = {"strict": "strict", "exact": "exact", "partial": "partial", "ent_type": "type"}
 
@@ -26,29 +27,30 @@ def log(msg, fh):
     print(msg)
     fh.write(msg + "\n")
 
-FINE_TO_COARSE = {
-    "Scientist": "PER", "Artist": "PER", "Athlete": "PER",
-    "Politician": "PER", "Cleric": "PER", "SportsManager": "PER",
-    "OtherPER": "PER",
-    "Facility": "LOC", "OtherLOC": "LOC",
-    "HumanSettlement": "LOC", "Station": "LOC",
-    "MusicalGRP": "ORG", "PublicCORP": "ORG", "PrivateCORP": "ORG",
-    "AerospaceManufacturer": "ORG", "SportsGRP": "ORG",
-    "CarManufacturer": "ORG", "ORG": "ORG",
-}
+TNER_LABELS = [
+    "O",       "B-PER",   "I-PER",   "B-LOC",   "I-LOC",
+    "B-ORG",   "I-ORG",   "B-ANIM",  "I-ANIM",  "B-BIO",
+    "I-BIO",   "B-CEL",   "I-CEL",   "B-DIS",   "I-DIS",
+    "B-EVE",   "I-EVE",   "B-FOOD",  "I-FOOD",  "B-INST",
+    "I-INST",  "B-MEDIA", "I-MEDIA", "B-PLANT", "I-PLANT",
+    "B-MYTH",  "I-MYTH",  "B-TIME",  "I-TIME",  "B-VEHI",
+    "I-VEHI",  "B-SUPER", "I-SUPER", "B-PHY",   "I-PHY",
+]
+
 
 KEEP_TYPES = {"PER", "LOC", "ORG"}
 
+# Función para mapear etiquetas de MultiNERD (15 categorías) a las 3
 def map_tag(tag):
     if tag == "O":
         return "O"
     prefix, tipo = tag.split("-", 1)
-    coarse = FINE_TO_COARSE.get(tipo)
-    if coarse:
-        return f"{prefix}-{coarse}"
+    if tipo in KEEP_TYPES:
+        return tag
     return "O"
 
 
+# Función para convertir entidades con offsets a etiquetas IOB por token para su evaluación con nervaluate.
 def spans_to_iob(tokens, entities):
     labels = ["O"] * len(tokens)
 
@@ -68,55 +70,68 @@ def spans_to_iob(tokens, entities):
     return labels
 
 
-
+# Cargar el dataset
 ft = open(TRAZA_FILE, "w", encoding="utf-8")
 log("=" * 70, ft)
-log("  TRAZA DE EJECUCIÓN — MultiCoNER v2 (es)", ft)
+log("  TRAZA DE EJECUCIÓN — MultiNERD (es)", ft)
 log("=" * 70, ft)
-log("\nCargando MultiCoNER v2 (español)...", ft)
-dataset = load_dataset("MultiCoNER/multiconer_v2", "Spanish (ES)")
+log("\nCargando MultiNERD (español) desde tner/multinerd...", ft)
+dataset = load_dataset("tner/multinerd", "es")
 
-
+# Análisis 
 log("\n===== INFORMACIÓN DEL DATASET =====", ft)
-for split in ["train", "validation", "test"]:
+for split in dataset.keys():
     split_data = dataset[split]
     num_frases = len(split_data)
     total_tokens = sum(len(s) for s in split_data["tokens"])
     longitud_media = total_tokens / num_frases if num_frases > 0 else 0
-    total_ent = sum(1 for ej in split_data for tag in ej["ner_tags"] if map_tag(tag).startswith("B-"))
+    total_ent = sum(
+        1 for ej in split_data
+        for tag_id in ej["tags"]
+        if map_tag(TNER_LABELS[tag_id]).startswith("B-")
+    )
     log(f"\n  [{split.upper()}]", ft)
     log(f"    Frases: {num_frases}  |  Tokens: {total_tokens}  |  Media: {longitud_media:.1f} tok/frase  |  Entidades PER/LOC/ORG: {total_ent}", ft)
 
 conteo = {"PER": 0, "LOC": 0, "ORG": 0}
-conteo_fine = Counter()
+conteo_descartado = Counter()
 for ej in dataset["test"]:
-    for tag in ej["ner_tags"]:
+    for tag_id in ej["tags"]:
+        tag = TNER_LABELS[tag_id]
         if tag.startswith("B-"):
-            tipo_fine = tag[2:]
-            coarse = FINE_TO_COARSE.get(tipo_fine)
-            if coarse:
-                conteo[coarse] += 1
-                conteo_fine[tipo_fine] += 1
+            tipo = tag[2:]
+            if tipo in conteo:
+                conteo[tipo] += 1
+            else:
+                conteo_descartado[tipo] += 1
 
 log(f"\n  [TEST coarse]  PER: {conteo['PER']}  |  LOC: {conteo['LOC']}  |  ORG: {conteo['ORG']}", ft)
-log(f"  [TEST fine-grained top 10]", ft)
-for tipo, n in conteo_fine.most_common(10):
-    log(f"    {tipo} ({FINE_TO_COARSE.get(tipo,'?')}): {n}", ft)
+log(f"  [TEST top 5 categorías descartadas (mapeadas a O)]", ft)
+for tipo, n in conteo_descartado.most_common(5):
+    log(f"    {tipo}: {n}", ft)
 
-test_data = dataset["test"]
-if N > len(test_data):
-    N = len(test_data)
-log(f"\n  Evaluando: {N} frases", ft)
+# Muestreo aleatorio reproducible: 5000 frases del split test con seed fija.
+test_data_full = dataset["test"]
+if N > len(test_data_full):
+    N = len(test_data_full)
 
-# Preparar los datos de entrada y las etiquetas para la evaluación
+rng = random.Random(SEED)
+indices = sorted(rng.sample(range(len(test_data_full)), N))
+test_data = test_data_full.select(indices)
+log(f"\n  Muestreadas {N} frases de {len(test_data_full)} (seed={SEED})", ft)
+
 sentences_tokens = [test_data[i]["tokens"] for i in range(N)]
 sentences_text = [" ".join(tokens) for tokens in sentences_tokens]
-y_true = [[map_tag(tag) for tag in test_data[i]["ner_tags"]] for i in range(N)]
+y_true = [
+    [map_tag(TNER_LABELS[tag_id]) for tag_id in test_data[i]["tags"]]
+    for i in range(N)
+]
 
 log("\n--- EJEMPLOS DE MAPEO ---", ft)
 for i in range(min(5, N)):
     log(f"  Frase {i}: {sentences_text[i][:80]}{'...' if len(sentences_text[i]) > 80 else ''}", ft)
-    log(f"    Original: {test_data[i]['ner_tags'][:12]}", ft)
+    raw_tags_i = [TNER_LABELS[tag_id] for tag_id in test_data[i]["tags"]]
+    log(f"    Original: {raw_tags_i[:12]}", ft)
     log(f"    Mapeado:  {y_true[i][:12]}", ft)
 
 
@@ -231,6 +246,7 @@ log(f"{'=' * 70}", ft)
 ft.close()
 print(f"\n✓ Traza guardada en: {os.path.abspath(TRAZA_FILE)}")
 
+# 8. EVALUACIÓN CON NERVALUATE 
 
 fr = open(RESULTADOS_FILE, "w", encoding="utf-8")
 
@@ -239,7 +255,7 @@ def res(msg):
     fr.write(msg + "\n")
 
 res("=" * 70)
-res(f"  RESULTADOS — MultiCoNER v2 ES ({N} frases, nervaluate)")
+res(f"  RESULTADOS — MultiNERD ES ({N} frases, nervaluate)")
 res("=" * 70)
 
 modelos = [
@@ -285,7 +301,7 @@ for nombre, y_pred, t_exec in modelos:
 
 # Tabla resumen
 res(f"\n{'=' * 80}")
-res(f"  RESUMEN COMPARATIVO — MultiCoNER v2 ES ({N} frases)")
+res(f"  RESUMEN COMPARATIVO — MultiNERD ES ({N} frases)")
 res(f"{'=' * 80}")
 res(f"\n  {'Librería':<28} {'Strict F1':>10} {'Exact F1':>10} {'Partial F1':>10} {'Type F1':>10} {'Tiempo':>10}")
 res(f"  {'-' * 80}")
