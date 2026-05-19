@@ -1,0 +1,353 @@
+======================================================================
+  TRAZA DE EJECUCIÓN — MultiNERD (es)
+======================================================================
+
+Cargando MultiNERD (español) desde tner/multinerd...
+
+===== INFORMACIÓN DEL DATASET =====
+
+  [TEST]
+    Frases: 173189  |  Tokens: 4259844  |  Media: 24.6 tok/frase  |  Entidades PER/LOC/ORG: 181806
+
+  [TEST coarse]  PER: 70981  |  LOC: 90208  |  ORG: 20617
+  [TEST top 5 categorías descartadas (mapeadas a O)]
+    TIME: 45306
+    ANIM: 10543
+    DIS: 8560
+    MEDIA: 8028
+    FOOD: 7773
+
+  Muestreadas 5000 frases de 173189 (seed=42)
+
+--- EJEMPLOS DE MAPEO ---
+  Frase 0: La ecorregión alberga las que posiblemente son las mayores poblaciones de elefan...
+    Original: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Mapeado:  ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Frase 1: El tráfico cruza el río en el Puente de la Avenida Madison .
+    Original: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+    Mapeado:  ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Frase 2: La biología evolutiva se centra , desde sus inicios , en el estudio de animales ...
+    Original: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Mapeado:  ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Frase 3: Sin embargo existen excepciones , dentro de las especies más grandes como el Pte...
+    Original: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Mapeado:  ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Frase 4: El turno más largo registrado fueron 29 días de un petrel de Murphy de la Isla H...
+    Original: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ANIM', 'I-ANIM']
+    Mapeado:  ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+▶ [1/3] bert-spanish-cased-finetuned-ner — batch_size=32...
+   Tiempo: 416.4 s (12 frases/s)
+
+  [BERT] Frase 0: La ecorregión alberga las que posiblemente son las mayores poblaciones de elefan...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 1: El tráfico cruza el río en el Puente de la Avenida Madison .
+    → 'Puente de la Avenida Madison' = LOC (score: 0.998)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+
+  [BERT] Frase 2: La biología evolutiva se centra , desde sus inicios , en el estudio de animales ...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 3: Sin embargo existen excepciones , dentro de las especies más grandes como el Pte...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 4: El turno más largo registrado fueron 29 días de un petrel de Murphy de la Isla H...
+    → 'Murphy' = LOC (score: 0.992)
+    → 'Isla Henderson' = LOC (score: 0.999)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 5: La distribución de los habitantes es muy irregular : más de un tercio se concent...
+    → 'Aosta' = LOC (score: 0.980)
+    → 'Plaine aostoise' = LOC (score: 0.843)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 6: Durante cinco años fue sitiada por Salmanasar V , que fue ayudado por los fenici...
+    → 'Salmanasar V' = PER (score: 0.993)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 7: Desde 1962 estuvo trabajando en el área de semiconductores .
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 8: Su etapa profesional la inicia en 1962 , al incorporarse al Club Atlético Vélez ...
+    → 'Club Atlético Vélez Sarsfield' = ORG (score: 0.999)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 9: Finalmente , en junio del 2004 llega a Europa , donde con 24 años y dirigido una...
+    → 'Europa' = LOC (score: 1.000)
+    → 'Benito Floro' = PER (score: 1.000)
+    → 'Real Club Deportivo Mallorca' = ORG (score: 0.999)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+
+  [BERT] Frase 10: El antiguo presidente Liu Shaoqi fue purgado durante la Revolución Cultural y mu...
+    → 'Liu Shaoqi' = PER (score: 0.991)
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 11: Sin nuevas ideas , volvió a ser derrotado por un gobierno de coalición en las el...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 12: En ese momento , se pretendía que el juego fuera otro proyecto bidimensional par...
+    → 'SN' = ORG (score: 0.603)
+    → '##ES' = ORG (score: 0.443)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 13: Pasó gran parte de las divisiones formativas como suplente hasta que Marcelo Pag...
+    → 'Marcelo Pagani' = PER (score: 1.000)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 14: Con los años fue considerado uno de los 4 mariscales que tuvo el fútbol paraguay...
+    → 'Gerardo Rivas' = PER (score: 0.999)
+    → 'Manuel Fleitas Solich' = PER (score: 1.000)
+    → 'Arsenio Erico' = PER (score: 0.999)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+
+  [BERT] Frase 15: En 2010 , Dilma Rousseff se convirtió en la primera mujer elegida presidente , l...
+    → 'Dilma Rousseff' = PER (score: 0.994)
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 16: El vicepresidente Michel Temer quedó a cargo del gobierno .
+    → 'Michel Temer' = PER (score: 1.000)
+    Predicho: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 17: En cuartos de final , venció a la máxima favorita del torneo , Maria Elena Camer...
+    → 'Maria Elena Camerin' = PER (score: 1.000)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 18: En la cuarta cayó ante Svetlana Kuznetsova por 2 - 6 , 3 - 6 .
+    → 'S' = PER (score: 1.000)
+    → '##vetlana Kuznetsova' = PER (score: 0.868)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [BERT] Frase 19: En primera ronda derrotó a Varvara Lepchenko por un doble 6 - 2 .
+    → 'Varvara Lepchenko' = PER (score: 0.999)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+▶ [2/3] spaCy — batch_size=500, nlp.pipe()...
+   Tiempo: 30.5 s (164 frases/s)
+
+  [spaCy] Frase 0: La ecorregión alberga las que posiblemente son las mayores poblaciones de elefan...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 1: El tráfico cruza el río en el Puente de la Avenida Madison .
+    → 'Puente de la Avenida Madison' = LOC (original: LOC)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+
+  [spaCy] Frase 2: La biología evolutiva se centra , desde sus inicios , en el estudio de animales ...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 3: Sin embargo existen excepciones , dentro de las especies más grandes como el Pte...
+    → 'Pterodroma' = LOC (original: LOC)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 4: El turno más largo registrado fueron 29 días de un petrel de Murphy de la Isla H...
+    → 'Murphy' = PER (original: PER)
+    → 'Isla Henderson' = LOC (original: LOC)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 5: La distribución de los habitantes es muy irregular : más de un tercio se concent...
+    → 'llanura de Aosta' = LOC (original: LOC)
+    → 'Plaine' = LOC (original: LOC)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 6: Durante cinco años fue sitiada por Salmanasar V , que fue ayudado por los fenici...
+    → 'Salmanasar V' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 7: Desde 1962 estuvo trabajando en el área de semiconductores .
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 8: Su etapa profesional la inicia en 1962 , al incorporarse al Club Atlético Vélez ...
+    → 'Club Atlético Vélez Sarsfield' = ORG (original: ORG)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 9: Finalmente , en junio del 2004 llega a Europa , donde con 24 años y dirigido una...
+    → 'Europa' = LOC (original: LOC)
+    → 'Benito Floro' = PER (original: PER)
+    → 'Real Club Deportivo Mallorca' = ORG (original: ORG)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+
+  [spaCy] Frase 10: El antiguo presidente Liu Shaoqi fue purgado durante la Revolución Cultural y mu...
+    → 'Liu Shaoqi' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 11: Sin nuevas ideas , volvió a ser derrotado por un gobierno de coalición en las el...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 12: En ese momento , se pretendía que el juego fuera otro proyecto bidimensional par...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 13: Pasó gran parte de las divisiones formativas como suplente hasta que Marcelo Pag...
+    → 'Marcelo Pagani' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 14: Con los años fue considerado uno de los 4 mariscales que tuvo el fútbol paraguay...
+    → 'Gerardo Rivas' = PER (original: PER)
+    → 'Manuel Fleitas Solich' = PER (original: PER)
+    → 'Arsenio Erico' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+
+  [spaCy] Frase 15: En 2010 , Dilma Rousseff se convirtió en la primera mujer elegida presidente , l...
+    → 'Dilma Rousseff' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 16: El vicepresidente Michel Temer quedó a cargo del gobierno .
+    → 'Michel Temer' = PER (original: PER)
+    Predicho: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 17: En cuartos de final , venció a la máxima favorita del torneo , Maria Elena Camer...
+    → 'Maria Elena Camerin' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 18: En la cuarta cayó ante Svetlana Kuznetsova por 2 - 6 , 3 - 6 .
+    → 'Svetlana Kuznetsova' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [spaCy] Frase 19: En primera ronda derrotó a Varvara Lepchenko por un doble 6 - 2 .
+    → 'Varvara Lepchenko' = PER (original: PER)
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+▶ [3/3] Stanza (es, tokenize+ner)...
+   Tiempo: 1445.7 s (3 frases/s)
+
+  [Stanza] Frase 0: La ecorregión alberga las que posiblemente son las mayores poblaciones de elefan...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 1: El tráfico cruza el río en el Puente de la Avenida Madison .
+    → 'Puente de la Avenida Madison' = LOC
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+
+  [Stanza] Frase 2: La biología evolutiva se centra , desde sus inicios , en el estudio de animales ...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 3: Sin embargo existen excepciones , dentro de las especies más grandes como el Pte...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 4: El turno más largo registrado fueron 29 días de un petrel de Murphy de la Isla H...
+    → 'Isla Henderson' = LOC
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 5: La distribución de los habitantes es muy irregular : más de un tercio se concent...
+    → 'Aosta' = LOC
+    → '" Plaine aostoise "' = LOC
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 6: Durante cinco años fue sitiada por Salmanasar V , que fue ayudado por los fenici...
+    → 'Salmanasar V' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 7: Desde 1962 estuvo trabajando en el área de semiconductores .
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 8: Su etapa profesional la inicia en 1962 , al incorporarse al Club Atlético Vélez ...
+    → 'Club Atlético Vélez Sarsfield' = ORG
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 9: Finalmente , en junio del 2004 llega a Europa , donde con 24 años y dirigido una...
+    → 'Europa' = LOC
+    → 'Benito Floro' = PER
+    → 'Real Club Deportivo Mallorca' = ORG
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+
+  [Stanza] Frase 10: El antiguo presidente Liu Shaoqi fue purgado durante la Revolución Cultural y mu...
+    → 'Liu Shaoqi' = PER
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 11: Sin nuevas ideas , volvió a ser derrotado por un gobierno de coalición en las el...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 12: En ese momento , se pretendía que el juego fuera otro proyecto bidimensional par...
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 13: Pasó gran parte de las divisiones formativas como suplente hasta que Marcelo Pag...
+    → 'Marcelo Pagani' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 14: Con los años fue considerado uno de los 4 mariscales que tuvo el fútbol paraguay...
+    → 'Gerardo Rivas' = PER
+    → 'Manuel Fleitas Solich' = PER
+    → 'Arsenio Erico' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O']
+
+  [Stanza] Frase 15: En 2010 , Dilma Rousseff se convirtió en la primera mujer elegida presidente , l...
+    → 'Dilma Rousseff' = PER
+    Predicho: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 16: El vicepresidente Michel Temer quedó a cargo del gobierno .
+    → 'Michel Temer' = PER
+    Predicho: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 17: En cuartos de final , venció a la máxima favorita del torneo , Maria Elena Camer...
+    → 'Maria Elena Camerin' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 18: En la cuarta cayó ante Svetlana Kuznetsova por 2 - 6 , 3 - 6 .
+    → 'Svetlana Kuznetsova' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+  [Stanza] Frase 19: En primera ronda derrotó a Varvara Lepchenko por un doble 6 - 2 .
+    → 'Varvara Lepchenko' = PER
+    Predicho: ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    Real:     ['O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+======================================================================
+  FIN DE LA TRAZA — 5000 frases procesadas
+======================================================================

@@ -1,0 +1,107 @@
+======================================================================
+  RESULTADOS — MultiNERD ES (5000 frases, nervaluate)
+======================================================================
+
+──────────────────────────────────────────────────────────────────────
+  bert-spanish-cased-finetuned-ner  (tiempo: 416.4 s)
+──────────────────────────────────────────────────────────────────────
+
+  Modo          Precision     Recall         F1
+  --------------------------------------------
+  strict            0.942      0.972      0.957
+  exact             0.952      0.983      0.967
+  partial           0.957      0.988      0.973
+  type              0.950      0.980      0.965
+
+  Desglose por entidad (strict):
+  Tipo      Precision     Recall         F1    Support
+  --------------------------------------------------
+  PER           0.954      0.987      0.971       2066
+  LOC           0.956      0.965      0.961       2574
+  ORG           0.851      0.950      0.898        605
+
+  Análisis de errores:
+  Modo          Correct  Incorrect  Partial   Missed  Spurious
+  ----------------------------------------------------------
+  strict           5100        111        0       34       202
+  exact            5154         57        0       34       202
+  partial          5154          0       57       34       202
+  type             5142         69        0       34       202
+
+──────────────────────────────────────────────────────────────────────
+  spaCy (es_core_news_lg)  (tiempo: 30.5 s)
+──────────────────────────────────────────────────────────────────────
+
+  Modo          Precision     Recall         F1
+  --------------------------------------------
+  strict            0.852      0.924      0.887
+  exact             0.880      0.955      0.916
+  partial           0.895      0.971      0.931
+  type              0.880      0.955      0.916
+
+  Desglose por entidad (strict):
+  Tipo      Precision     Recall         F1    Support
+  --------------------------------------------------
+  PER           0.866      0.963      0.912       2066
+  LOC           0.849      0.934      0.890       2574
+  ORG           0.806      0.754      0.779        605
+
+  Análisis de errores:
+  Modo          Correct  Incorrect  Partial   Missed  Spurious
+  ----------------------------------------------------------
+  strict           4849        328        0       68       515
+  exact            5010        167        0       68       515
+  partial          5010          0      167       68       515
+  type             5008        169        0       68       515
+
+──────────────────────────────────────────────────────────────────────
+  Stanza (es)  (tiempo: 1445.7 s)
+──────────────────────────────────────────────────────────────────────
+
+  Modo          Precision     Recall         F1
+  --------------------------------------------
+  strict            0.894      0.936      0.914
+  exact             0.927      0.970      0.948
+  partial           0.938      0.981      0.959
+  type              0.914      0.957      0.935
+
+  Desglose por entidad (strict):
+  Tipo      Precision     Recall         F1    Support
+  --------------------------------------------------
+  PER           0.905      0.957      0.930       2066
+  LOC           0.935      0.927      0.931       2574
+  ORG           0.724      0.898      0.801        605
+
+  Análisis de errores:
+  Modo          Correct  Incorrect  Partial   Missed  Spurious
+  ----------------------------------------------------------
+  strict           4907        298        0       40       283
+  exact            5087        118        0       40       283
+  partial          5087          0      118       40       283
+  type             5018        187        0       40       283
+
+================================================================================
+  RESUMEN COMPARATIVO — MultiNERD ES (5000 frases)
+================================================================================
+
+  Librería                      Strict F1   Exact F1 Partial F1    Type F1     Tiempo
+  --------------------------------------------------------------------------------
+  bert-spanish-cased-finetuned-ner      0.957      0.967      0.973      0.965    416.4 s
+  spaCy (es_core_news_lg)           0.887      0.916      0.931      0.916     30.5 s
+  Stanza (es)                       0.914      0.948      0.959      0.935   1445.7 s
+
+================================================================================
+
+LEYENDA de modos de evaluación (nervaluate):
+  strict  = límites Y tipo deben coincidir exactamente
+  exact   = límites deben coincidir, tipo puede ser diferente
+  partial = crédito parcial si los límites solapan parcialmente
+  type    = tipo debe coincidir, límites pueden solapar parcialmente
+
+LEYENDA de errores:
+  correct   = entidades correctas (TP)
+  incorrect = tipo o límites incorrectos
+  partial   = límites parcialmente correctos
+  missed    = entidades del gold standard no detectadas (FN)
+  spurious  = entidades predichas que no existen en gold standard (FP)
+
