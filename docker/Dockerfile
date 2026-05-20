@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 WORKDIR /app
 
 # Dependencias del sistema
@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir --upgrade pip
 COPY requirements.txt .
 RUN pip install --no-cache-dir --default-timeout=300 --retries 5 -r requirements.txt
 
-# Descargar modelos pre-entrenados
-RUN python -m spacy download es_core_news_lg
+# Descargar modelos pre-entrenados con versiones fijadas
+RUN pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.8.0/es_core_news_lg-3.8.0-py3-none-any.whl
 RUN python -c "import stanza; stanza.download('es')"
 
 # Copiar codigo y datos del proyecto
@@ -24,3 +24,4 @@ COPY data/ ./data/
 # Crear directorio de resultados
 RUN mkdir -p /app/results
 
+# Sin CMD por defecto: el usuario elige que script ejecutar
