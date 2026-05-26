@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from faicons import icon_svg
 import pandas as pd
 import spacy
 from shiny import App, reactive, render, ui
@@ -134,10 +135,50 @@ REGLAS_DISPONIBLES = {
     "palabras_trampa": ("Palabras trampa",            regla_palabras_trampa),
 }
 
+DESCRIPCIONES_REGLAS = {
+    "numero":     "Elimina términos formados solo por dígitos, comas, "
+                  "puntos, barras o guiones (ej. 3,5 o 2024/01).",
+    "url":        "Elimina términos que contienen http://, https:// o www.",
+    "email":      "Elimina términos con formato de email "
+                  "(texto@dominio.com).",
+    "puntuacion": "Elimina términos con comillas o paréntesis "
+                  "desbalanceados, indicador de fragmentos de oración.",
+
+    "palabras_trampa": "Elimina términos que contienen palabras que "
+                       "suelen indicar fragmentos de oración, como "
+                       "«véanse» o «través»."
+}
+
+DESCRIPCION_POS = (
+    "Analiza la categoría gramatical de cada término con spaCy. "
+    "Conserva nombres propios, siglas y construcciones nominales. "
+    "Elimina palabras comunes aisladas y fragmentos con verbos."
+)
+
+DESCRIPCION_BLACKLIST = (
+    "Aplica la lista negra editable. Los términos que coincidan con "
+    "alguna línea de la lista se eliminan independientemente del resto "
+    "de filtros."
+)
 
 _POS_NOMINAL = {"NOUN", "PROPN", "ADJ", "DET", "ADP", "X", "NUM"}
 _POS_CONSERVAR_SOLO = {"PROPN", "X"}
 _PALABRAS_TRAMPA = {"través" , "véanse"}
+
+def checkbox_con_info(id_, etiqueta, descripcion):
+
+    return ui.div(
+        ui.input_checkbox(id_, etiqueta, value=True),
+        ui.tooltip(
+            ui.span(
+                icon_svg("circle-info"),
+                style="margin-left: 0.5rem; color: #6c757d; "
+                      "cursor: help;",
+            ),
+            descripcion,
+        ),
+        style="display: flex; align-items: center;",
+    )
 
 def aplicar_pos_tagging(term: str, nlp_model) -> str | None:
     doc = nlp_model(term)
@@ -211,46 +252,35 @@ app_ui = ui.page_sidebar(
             "Una línea por término `término: frecuencia`"
         ),
         ui.tags.hr(),
-        ui.h6("Reglas"),
-        ui.input_checkbox_group(
-            "reglas",
-            label=None,
-            choices={rid: label for rid, (label, _fn) in REGLAS_DISPONIBLES.items()},
-            selected=list(REGLAS_DISPONIBLES.keys()),
-        ),
+       ui.h6("Reglas"),
+*[
+    checkbox_con_info(rid, label, DESCRIPCIONES_REGLAS.get(rid, ""))
+    for rid, (label, _fn) in REGLAS_DISPONIBLES.items()
+],
         ui.tags.hr(),
+       ui.div(
         ui.input_switch("usar_pos", "Filtrado con spaCy", value=True),
-        ui.accordion(
-            ui.accordion_panel(
-                "¿Qué hace este filtro?",
-                ui.markdown(
-                    """
-        Este filtro analiza la categoría gramatical (POS tag) de cada término
-        usando el modelo `es_core_news_lg` de spaCy.
-
-        **Conserva los términos que son:**
-
-        - **Una sola palabra**: solo si es un nombre propio (Madrid, Telefónica)
-        o una sigla/acrónimo (AEAT, IRPF).
-        - **Varias palabras**: si alguna es nombre propio o sigla, o si toda
-        la construcción es nominal (sustantivos, adjetivos, determinantes,
-        preposiciones, números).
-
-        **Elimina los términos que son:**
-
-        - Palabras comunes aisladas: verbos, adverbios, adjetivos sueltos
-        (trabajo, rápidamente, importante).
-        - Construcciones con verbos o conjunciones que indican que no es una
-        entidad sino un fragmento de oración.
-                    """
-                ),
-                value="info_pos",
+        ui.tooltip(
+            ui.span(
+                icon_svg("circle-info"),
+                style="margin-left: 0.5rem; color: #6c757d; cursor: help;",
             ),
-            open=False,
-            id="acc_info_pos",
+            DESCRIPCION_POS,
         ),
+        style="display: flex; align-items: center;",
+    ),
         ui.tags.hr(),
+       ui.div(
         ui.input_switch("usar_blacklist", "Aplicar lista negra", value=True),
+        ui.tooltip(
+            ui.span(
+                icon_svg("circle-info"),
+                style="margin-left: 0.5rem; color: #6c757d; cursor: help;",
+            ),
+            DESCRIPCION_BLACKLIST,
+        ),
+        style="display: flex; align-items: center;",
+    ),
         ui.input_text_area(
             "blacklist",
             "Términos de la lista negra",
@@ -285,7 +315,6 @@ app_ui = ui.page_sidebar(
             
         ),
     ),
-   ui.layout_columns(
     ui.navset_card_tab(
     ui.nav_panel(
             "Conservados",
@@ -300,9 +329,7 @@ app_ui = ui.page_sidebar(
             ui.output_data_frame("tabla_resumen"),
         ),
     ),
-    col_widths=[40],
-
-),
+   
     title="TFG · NER Filter",
 )
 
@@ -327,11 +354,16 @@ def server(input, output, session):
             for line in input.blacklist().splitlines()
             if line.strip()
         }
+       # Construir tupla de reglas activas leyendo cada checkbox individual
+        reglas_activas = tuple(
+            rid for rid in REGLAS_DISPONIBLES.keys()
+            if input[rid]()
+        )
         return filtrar(
             df,
-            input.reglas(),         
-            input.usar_pos(),       
-            input.usar_blacklist(), 
+            reglas_activas,
+            input.usar_pos(),
+            input.usar_blacklist(),
             blacklist_set,
         )
 
@@ -357,11 +389,11 @@ def server(input, output, session):
 
     @render.data_frame
     def tabla_conservados():
-        return render.DataGrid(resultado()[0], filters=True, height="500px",width="100%" )
+        return render.DataGrid(resultado()[0], filters=True, height="70vh",width="100%" )
 
     @render.data_frame
     def tabla_eliminados():
-        return render.DataGrid(resultado()[1], filters=True, height="500px",width="100%")
+        return render.DataGrid(resultado()[1], filters=True, height="70vh",width="100%")
 
     @render.data_frame
     def tabla_resumen():
@@ -375,7 +407,7 @@ def server(input, output, session):
             .sort_values("Eliminados", ascending=False)
             .reset_index(drop=True)
         )
-        return render.DataGrid(resumen, height="300px", width="100%")
+        return render.DataGrid(resumen, height="70vh", width="100%")
    
 
 app = App(app_ui, server)
