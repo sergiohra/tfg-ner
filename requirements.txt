@@ -8,3 +8,4 @@ torch==2.7.1
 shiny==1.6.0
 htmltools==0.6.0
 pandas==3.0.1
+faicons

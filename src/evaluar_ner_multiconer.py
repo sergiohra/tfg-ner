@@ -11,8 +11,8 @@ from nervaluate import Evaluator
 from collections import Counter
 
 # Configuración del experimento
-TRAZA_FILE = "traza_multiconer.txt"  
-RESULTADOS_FILE = "resultados_multiconer.txt"
+TRAZA_FILE = "results/traza_multiconer.txt"  
+RESULTADOS_FILE = "results/resultados_multiconer.txt"
 N = 5000 
 NUM_EJEMPLOS_TRAZA = 20 
 BATCH_SIZE_HF = 32 
@@ -318,3 +318,13 @@ LEYENDA de errores:
 fr.close()
 print(f"\n✓ Resultados guardados en: {os.path.abspath(RESULTADOS_FILE)}")
 print(f"✓ Traza guardada en: {os.path.abspath(TRAZA_FILE)}")
+
+from collections import Counter
+
+conteo = Counter()
+for frase_bio in y_true:          # usa el nombre real de tu lista de gold
+    for etiqueta in frase_bio:
+        if etiqueta.startswith("B-"):
+            conteo[etiqueta[2:]] += 1   # PER / LOC / ORG
+
+print(conteo, "TOTAL:", sum(conteo.values()))

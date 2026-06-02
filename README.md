@@ -1,60 +1,124 @@
-# TFG-NER: Filtrado semiautomático de Entidades Nombradas
+---
 
-Trabajo de Fin de Grado: comparación de tres librerías NER en español 
-(spaCy, HuggingFace Transformers y Stanza) sobre dos benchmarks 
-neutrales (MultiCoNER v2 y MultiNERD), y desarrollo de una aplicación 
-web para el filtrado de candidatos a entidad mediante etiquetado 
-morfosintáctico.
+## Requisitos
 
-**Autor:** Sergio Hernández Rodríguez  
-**Tutor:** Mariano Rico  
-**Centro:** ETSIINF — Universidad Politécnica de Madrid
+La forma recomendada de uso es a través de la imagen Docker, que encapsula todas las dependencias y modelos preentrenados.
 
-## Estructura del repositorio
+- **Docker** 20.10 o superior (Docker Desktop en Windows/Mac, o `docker.io` en Linux).
+- **~5 GB** de espacio en disco (la imagen ocupa aproximadamente 3 GB).
+- **8 GB de RAM** recomendados.
+- **Conexión a internet** durante la ejecución de los experimentos: los corpus MultiCoNER v2 y MultiNERD se descargan automáticamente desde HuggingFace al lanzar cada script.
 
-- **`src/`** — código fuente
-  - `evaluar_ner_multiconer.py` — experimento 1, evaluación sobre MultiCoNER v2
-  - `evaluar_ner_multinerd.py` — experimento 2, evaluación sobre MultiNERD
-  - `tfg-ner-app/` — aplicación web Shiny para el filtrado de candidatos
-- **`data/`** — datos de entrada
-- **`results/`** — salidas de los experimentos
-  - `traza_multiconer.txt` y `resultados_multiconer.txt` — primer experimento
-  - `traza_multinerd.txt` y `resultados_multinerd.txt` — segundo experimento
-- **`docker/`** — `Dockerfile` para reproducir el entorno
-- **`requirements.txt`** — dependencias de Python
+Si se prefiere ejecutar sin Docker: Python 3.11 y las dependencias de `requirements.txt`.
 
+---
 
-## Aplicación de filtrado
+## Instalación
 
-La aplicación web permite filtrar listas de candidatos a entidad 
-mediante una combinación de tres técnicas: lista negra editable, 
-reglas formales (números, URLs, emails, puntuación) y etiquetado 
-POS con spaCy.
+### Opción A — Desde DockerHub (recomendada)
 
 ```bash
-cd src/tfg-ner-app
-shiny run --reload app.py
+docker pull sergiotfg/tfg-ner:v9
 ```
 
-Abrir el navegador en `http://localhost:8000`.
+### Opción B — Construir la imagen desde el código fuente
 
-## Resultados resumidos
+```bash
+git clone https://github.com/sergiotfg/tfg-ner.git
+cd tfg-ner
+docker build -t sergiotfg/tfg-ner:v9 -f docker/Dockerfile .
+```
 
-| Modelo | MultiCoNER v2 (Strict F1) | MultiNERD (Strict F1) |
-|---|---|---|
-| spaCy (`es_core_news_lg`) | **0.683** | 0.887 |
-| HuggingFace (`mrm8488/bert-spanish-cased-finetuned-ner`) | 0.280 | **0.957** |
-| Stanza (`es`) | 0.077 | 0.914 |
+La primera construcción puede tardar entre 15 y 30 minutos: instala las dependencias y descarga los modelos de spaCy y Stanza.
 
-El ranking se invierte casi por completo entre los dos datasets, 
-lo que indica que el factor responsable es el formato del texto 
-(presencia de mayúsculas y ausencia de ruido tipográfico) y no la 
-arquitectura del modelo.
+### Opción C — Instalación local (sin Docker)
 
-Sobre la herramienta de filtrado, sobre un fichero de 1.260 términos 
-jurídicos se conservan 884 candidatos (70%) y se descartan 376 (30%), 
-con trazabilidad completa del criterio responsable de cada descarte.
+```bash
+git clone https://github.com/sergiotfg/tfg-ner.git
+cd tfg-ner
+pip install -r requirements.txt
+python -m spacy download es_core_news_lg
+python -c "import stanza; stanza.download('es')"
+```
+
+---
+
+## Uso
+
+Como la imagen no define un `CMD` por defecto, cada comando indica explícitamente qué ejecutar. La opción `-v` monta la carpeta `results/` local sobre la del contenedor para conservar las salidas.
+
+> **Windows (PowerShell):** sustituir `$(pwd)` por `${PWD}` y escribir cada comando en una sola línea.
+
+### Experimento 1 — Evaluación en MultiCoNER v2
+
+Banco de pruebas principal: subconjunto en español de MultiCoNER v2 (SemEval-2023). Benchmark neutral, ninguna librería fue entrenada sobre él.
+
+```bash
+docker run --rm -v "$(pwd)/results:/app/results" \
+    sergiotfg/tfg-ner:v9 python src/evaluar_ner_multiconer.py
+```
+
+Genera en `results/` los ficheros `resultados_multiconer.txt` (métricas) y `traza_multiconer.txt` (log de ejemplos). Tiempo aproximado: 20-25 minutos en CPU (Stanza es la fase más lenta, ~17 min).
+
+### Experimento 2 — Evaluación en MultiNERD
+
+Mismas tres librerías sobre MultiNERD (Tedeschi & Navigli, 2022), con capitalización normal, para contrastar el efecto de las minúsculas observado en MultiCoNER v2.
+
+```bash
+docker run --rm -v "$(pwd)/results:/app/results" \
+    sergiotfg/tfg-ner:v9 python src/evaluar_ner_multinerd.py
+```
+
+Genera `resultados_multinerd.txt` y `traza_multinerd.txt` en `results/`.
+
+### Aplicación Shiny — Filtrado de candidatos a entidad
+
+Aplicación web que filtra un fichero de términos candidatos a entidad y elimina falsos positivos. Combina tres técnicas activables de forma independiente: una **lista negra editable**, un conjunto de **reglas formales** (número, URL, email, puntuación descuadrada y palabras trampa) y un criterio de **etiquetado morfosintáctico (POS)** con spaCy. La salida muestra los términos conservados y los eliminados, junto con el motivo de cada descarte. Pensada para usuarios sin formación técnica.
+
+```bash
+docker run --rm -p 8000:8000 -w /app/src/tfg-ner-app \
+    sergiotfg/tfg-ner:v9 \
+    shiny run --host 0.0.0.0 --port 8000 app.py
+```
+
+Una vez lanzada, abrir en el navegador del host:
+http://localhost:8000
+
+El flag `-p 8000:8000` expone el puerto al host y `-w` sitúa el directorio de trabajo en la carpeta de la app (necesario para que cargue correctamente sus recursos estáticos).
+
+---
+
+## Resultados principales
+
+Resultados sobre el conjunto de **test** de MultiCoNER v2 (español), modo `strict`:
+
+| Librería | F1 |
+|---|---:|
+| **spaCy** (`es_core_news_lg`) | **0.683** |
+| **HuggingFace** (`mrm8488/bert-spanish-cased-finetuned-ner`) | 0.280 |
+| **Stanza** (`es`) | 0.077 |
+
+Sobre MultiNERD (capitalización normal) el ranking se invierte casi por completo (BERT 0.957, Stanza 0.914, spaCy 0.887), lo que evidencia que el factor dominante de degradación es el formato del texto de entrada, no la arquitectura. Los valores completos de Precision/Recall por modo y por tipo de entidad se generan al ejecutar los scripts y se guardan en `results/`.
+
+---
+
+## Reproducibilidad
+
+- La imagen Docker fija las versiones de Python (3.11), spaCy (3.8.0) y el resto de dependencias declaradas en `requirements.txt`.
+- El modelo `es_core_news_lg` se instala desde una URL versionada, evitando actualizaciones silenciosas.
+- Los corpus de evaluación (MultiCoNER v2 y MultiNERD) se descargan desde HuggingFace en el momento de la ejecución; la lista de términos jurídicos de la aplicación está incluida en `data/`.
+- Los volúmenes Docker (`-v ...:/app/results`) permiten conservar las salidas fuera del contenedor.
+
+Para replicar los resultados publicados:
+
+```bash
+docker pull sergiotfg/tfg-ner:v9
+docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v9 python src/evaluar_ner_multiconer.py
+docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v9 python src/evaluar_ner_multinerd.py
+```
+
+---
 
 ## Licencia
 
-Ver fichero `LICENSE`.
+Este proyecto se distribuye bajo licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.

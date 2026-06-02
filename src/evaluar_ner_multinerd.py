@@ -12,8 +12,8 @@ from nervaluate import Evaluator
 from collections import Counter
 
 # Configuración del experimento
-TRAZA_FILE = "../results/traza_multinerd.txt"  
-RESULTADOS_FILE = "../results/resultados_multinerd.txt"  
+TRAZA_FILE = "results/traza_multinerd.txt"  
+RESULTADOS_FILE = "results/resultados_multinerd.txt"  
 N = 5000  
 SEED = 42  
 NUM_EJEMPLOS_TRAZA = 20
