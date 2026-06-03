@@ -161,6 +161,12 @@ DESCRIPCION_BLACKLIST = (
     "de filtros."
 )
 
+DESCRIPCION_ARCHIVO = (
+    "Fichero de texto plano (.txt) con un término por línea. "
+    "Cada línea puede ser un término simple o seguir el formato «término: frecuencia»\n"
+    "Ejemplos: «aeat: 87», «contrato de trabajo: 19» o «madrid»."
+)
+
 _POS_NOMINAL = {"NOUN", "PROPN", "ADJ", "DET", "ADP", "X", "NUM"}
 _POS_CONSERVAR_SOLO = {"PROPN", "X"}
 _PALABRAS_TRAMPA = {"través" , "véanse"}
@@ -241,16 +247,25 @@ def filtrar(df, reglas_activas, usar_pos, usar_blacklist, blacklist_set):
 app_ui = ui.page_sidebar(
     ui.sidebar(
         ui.h4("Configuración del filtrado"),
-        ui.input_file(
-            "archivo",
-            "Archivo de términos",
-            accept=[".txt"],
-            multiple=False,
-            placeholder="ningún archivo seleccionado",
+        ui.div(
+    ui.input_file(
+        "archivo",
+        "Archivo de términos",
+        accept=[".txt"],
+        multiple=False,
+        placeholder="ningún archivo seleccionado",
+    ),
+    ui.tooltip(
+        ui.span(
+            icon_svg("circle-info"),
+            style="margin-left: 0.5rem; color: #6c757d; "
+                  "cursor: help; align-self: flex-end; "
+                  "margin-bottom: 0.7rem;",
         ),
-        ui.help_text(
-            "Una línea por término `término: frecuencia`"
-        ),
+        DESCRIPCION_ARCHIVO,
+    ),
+    style="display: flex; align-items: center;",
+),
         ui.tags.hr(),
        ui.h6("Reglas"),
 *[
