@@ -3,7 +3,7 @@
 ### Opción A — Desde DockerHub (recomendada)
 
 ```bash
-docker pull sergiotfg/tfg-ner:v9
+docker pull sergiotfg/tfg-ner:v11
 ```
 
 ### Opción B — Construir la imagen desde el código fuente
@@ -11,7 +11,7 @@ docker pull sergiotfg/tfg-ner:v9
 ```bash
 git clone https://github.com/sergiotfg/tfg-ner.git
 cd tfg-ner
-docker build -t sergiotfg/tfg-ner:v9 -f docker/Dockerfile .
+docker build -t sergiotfg/tfg-ner:v11 -f docker/Dockerfile .
 ```
 
 La primera construcción puede tardar entre 15 y 30 minutos: instala las dependencias y descarga los modelos de spaCy y Stanza.
@@ -40,7 +40,7 @@ Banco de pruebas principal: subconjunto en español de MultiCoNER v2 (SemEval-20
 
 ```bash
 docker run --rm -v "$(pwd)/results:/app/results" \
-    sergiotfg/tfg-ner:v9 python src/evaluar_ner_multiconer.py
+    sergiotfg/tfg-ner:v11 python src/evaluar_ner_multiconer.py
 ```
 
 Genera en `results/` los ficheros `resultados_multiconer.txt` (métricas) y `traza_multiconer.txt` (log de ejemplos). Tiempo aproximado: 20-25 minutos en CPU (Stanza es la fase más lenta, ~17 min).
@@ -51,7 +51,7 @@ Mismas tres librerías sobre MultiNERD (Tedeschi & Navigli, 2022), con capitaliz
 
 ```bash
 docker run --rm -v "$(pwd)/results:/app/results" \
-    sergiotfg/tfg-ner:v9 python src/evaluar_ner_multinerd.py
+    sergiotfg/tfg-ner:v11 python src/evaluar_ner_multinerd.py
 ```
 
 Genera `resultados_multinerd.txt` y `traza_multinerd.txt` en `results/`.
@@ -62,7 +62,7 @@ Aplicación web que filtra un fichero de términos candidatos a entidad y elimin
 
 ```bash
 docker run --rm -p 8000:8000 -w /app/src/tfg-ner-app \
-    sergiotfg/tfg-ner:v9 \
+    sergiotfg/tfg-ner:v11 \
     shiny run --host 0.0.0.0 --port 8000 app.py
 ```
 
@@ -97,9 +97,9 @@ Sobre MultiNERD (capitalización normal) el ranking se invierte casi por complet
 Para replicar los resultados publicados:
 
 ```bash
-docker pull sergiotfg/tfg-ner:v9
-docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v9 python src/evaluar_ner_multiconer.py
-docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v9 python src/evaluar_ner_multinerd.py
+docker pull sergiotfg/tfg-ner:v11
+docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v11 python src/evaluar_ner_multiconer.py
+docker run --rm -v "$(pwd)/results:/app/results" sergiotfg/tfg-ner:v11 python src/evaluar_ner_multinerd.py
 ```
 
 ---
