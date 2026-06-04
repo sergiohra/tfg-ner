@@ -1,17 +1,3 @@
----
-
-## Requisitos
-
-La forma recomendada de uso es a través de la imagen Docker, que encapsula todas las dependencias y modelos preentrenados.
-
-- **Docker** 20.10 o superior (Docker Desktop en Windows/Mac, o `docker.io` en Linux).
-- **~5 GB** de espacio en disco (la imagen ocupa aproximadamente 3 GB).
-- **8 GB de RAM** recomendados.
-- **Conexión a internet** durante la ejecución de los experimentos: los corpus MultiCoNER v2 y MultiNERD se descargan automáticamente desde HuggingFace al lanzar cada script.
-
-
----
-
 ## Instalación
 
 ### Opción A — Desde DockerHub (recomendada)
