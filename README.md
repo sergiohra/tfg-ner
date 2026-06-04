@@ -9,7 +9,6 @@ La forma recomendada de uso es a través de la imagen Docker, que encapsula toda
 - **8 GB de RAM** recomendados.
 - **Conexión a internet** durante la ejecución de los experimentos: los corpus MultiCoNER v2 y MultiNERD se descargan automáticamente desde HuggingFace al lanzar cada script.
 
-Si se prefiere ejecutar sin Docker: Python 3.11 y las dependencias de `requirements.txt`.
 
 ---
 
